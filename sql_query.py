@@ -160,10 +160,10 @@ class SQL_atm:
                 SQL_atm.withdraw_money(number_card)
             elif operation == '3':
                 SQL_atm.depositing_money(number_card)
-            elif operation == '4':
-                print('Спасибо за ваш визит, всего доброго!')
             elif operation == '5':
                 SQL_atm.transfer_money()
+            elif operation == '4':
+                print('Спасибо за ваш визит, всего доброго!')                
                 return False
             else:
                 print('Данная операция недоступна, приносим свои извинения')
