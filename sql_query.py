@@ -136,14 +136,29 @@ class SQL_atm:
             balance_info_result = cur.fetchone()
             balance_card = balance_info_result[0]
         amount = input('Введите пожалуйста сумму которую желаете перевести: ')
+        while not amount.isdigit():
+            amount = input('Введите пожалуйста сумму которую желаете перевести: ')
         if int(amount) < int(balance_card):
             while not amount.isdigit():
                 amount = input('Введите пожалуйста сумму которую желаете перевести: ')
             number_card = input('Введите номер карты на которую необходимо выполнить перевод: ')
+            while not number_card.isdigit():
+                number_card = input('Введите номер карты на которую необходимо выполнить перевод: ')
+
+            with sqlite3.connect('atm.db') as db:
+                cur = db.cursor()
+                cur.execute(f'''SELECT Number_card FROM Users_data WHERE Number_card = {number_card}''')
+                result_card = cur.fetchone()
+                if result_card == None:
+                    print('Введен неизвестный номер карты')
+                    return False
             while number_card == num:
                 number_card = input('Введите номер карты на которую необходимо выполнить перевод: ')
+                while not number_card.isdigit():
+                    number_card = input('Введите номер карты на которую необходимо выполнить перевод: ')
+
             while not number_card.isdigit():
-                number_card = input('Введите пожалуйста сумму которую желаете перевести: ')
+                number_card = input('Введите номер карты на которую необходимо выполнить перевод: ')
             with sqlite3.connect('atm.db') as db:
                 try:
                     cur = db.cursor()
@@ -153,7 +168,7 @@ class SQL_atm:
                     db.commit()
                     # SQL_atm.info_balance(number_card)
                     SQL_atm.report_operation_1(now_date, number_card, "3", amount, "")
-                    SQL_atm.report_operation_2(now_date, "", "3", amount, number_card, num)
+                    SQL_atm.report_operation_2(now_date, num, "", "3", amount, number_card)
                     return True
                 except:
                     print('Попытка выполнить некорректное действие')
@@ -203,10 +218,10 @@ class SQL_atm:
         print("Данные внесены в отчет - report_1")
 
     @staticmethod
-    def report_operation_2(Date, Payee, Type_operation, Amount, Sender, Semi_user):
+    def report_operation_2(Date, Semi_user, Payee, Type_operation, Amount, Sender):
 
         user_data = [
-            (Date, Payee, Type_operation, Amount, Sender, Semi_user)
+            (Date, Semi_user, Payee, Type_operation, Amount, Sender)
         ]
 
         with open("report_2.csv", "a", newline='') as file:
